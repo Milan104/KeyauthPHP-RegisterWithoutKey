@@ -1,18 +1,12 @@
 <?php
 	
-require 'keyauth.php';
+require 'keyauth.php'; // Import KeyAuth Class from keyauth.php file
 
 /*
-WATCH VIDEO TO SETUP: https://youtube.com/watch?v=NCZkg_O92sA
+    Requirements: ["KeyAuth Seller Plan"]
+    PHP Example Installing Video: https://youtube.com/watch?v=NCZkg_O92sA
+    For License Generation Details Please install them on lines: 121-124 in this file
 */
-
-$ch = curl_init("https://keyauth.win/api/seller/?sellerkey=YOURSELLERKEYHERE&type=add&expiry=10000&mask=XXXXXX-XXXXXX-XXXXXX-XXXXXX-XXXXXX-XXXXXX&level=1&amount=1&format=text");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HEADER, 0);
-$regKey = curl_exec($ch);
-curl_close($ch);
-
-
 
 if (isset($_SESSION['user_data'])) 
 {
@@ -20,8 +14,8 @@ if (isset($_SESSION['user_data']))
     exit();
 }
 
-$name = ""; // your application name
-$ownerid = ""; // your KeyAuth account's ownerid, located in account settings 
+$name = ""; // KeyAuth Application Name
+$ownerid = ""; // KeyAuth Application Owner ID
 $KeyAuthApp = new KeyAuth\api($name, $ownerid);
 
 if (!isset($_SESSION['sessionid'])) 
@@ -58,7 +52,6 @@ if (!isset($_SESSION['sessionid']))
 						<input class="input100" type="password" name="password" placeholder="Password">
 						<span class="focus-input100"></span>
 					</div>
-					
 
 					<div class="container-login100-form-btn m-t-17">
 						<button name="login" class="login100-form-btn">
@@ -72,7 +65,6 @@ if (!isset($_SESSION['sessionid']))
 						</button>
 					</div>
 					
-
 				</form>
 			</div>	
 		</div>
@@ -105,7 +97,7 @@ if (!isset($_SESSION['sessionid']))
 		
 		if (isset($_POST['register']))
         {
-		// register with username,password,key
+            $regKey = genKey(); // Generates Key
 		if($KeyAuthApp->register($_POST['username'],$_POST['password'],$regKey))
 		{
 			echo "<meta http-equiv='Refresh' Content='2; url=dashboard/'>";
@@ -124,50 +116,19 @@ if (!isset($_SESSION['sessionid']))
                             ';     
 		}
 		}
-		
-		if (isset($_POST['license']))
-        {
-		// login with just key
-		if($KeyAuthApp->license($_POST['key']))
-		{
-			echo "<meta http-equiv='Refresh' Content='2; url=dashboard/'>";
-			                            echo '
-                            <script type=\'text/javascript\'>
-                            
-                            const notyf = new Notyf();
-                            notyf
-                              .success({
-                                message: \'You have successfully logged in!\',
-                                duration: 3500,
-                                dismissible: true
-                              });                
-                            
-                            </script>
-                            ';     
-		}
-		}
-		
-		if (isset($_POST['upgrade']))
-        {
-		// login with just key
-		if($KeyAuthApp->upgrade($_POST['username'],$_POST['key']))
-		{
-							// don't login, upgrade function is not for authentication, it's simply for redeeming keys
-			                            echo '
-                            <script type=\'text/javascript\'>
-                            
-                            const notyf = new Notyf();
-                            notyf
-                              .success({
-                                message: \'Upgraded Successfully! Now login please.\',
-                                duration: 3500,
-                                dismissible: true
-                              });                
-                            
-                            </script>
-                            ';     
-		}
-		}
+
+        function genKey() {
+            $SellerKey = ""; // Your Seller Key [Requires Seller Plan]
+            $Expiry = "10"; // In Days
+            $KeyMask = "XXXXXX-XXXXXX-XXXXXX-XXXXXX-XXXXXX-XXXXXX"; // Key Mask for key that will be generated
+            $KeyLevel = "1"; // License key Level from subscription levels page
+
+            $ch = curl_init("https://keyauth.win/api/seller/?sellerkey=" . $SellerKey . "&type=add&expiry=" . $Expiry . "&mask=" . $KeyMask . "&level=" . $KeyLevel . "&amount=1&format=text");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            $regKey = curl_exec($ch);
+            curl_close($ch);
+            return $regKey;
+        }
     ?>
 </body>
 </html>
