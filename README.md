@@ -8,4 +8,4 @@ This requires KeyAuth seller plan to utlilize the seller API. Upgrade at https:/
 # Setup
 
 1. Set Application Name And OwnerID in index.php in index.php!
-2. Enter your sellerkey in line 9.
+2. Enter your sellerkey in line 9. (index.php)
